@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Codex Events</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="navbar">
+    <img src="assets/logo.png" alt="Codex Logo" class="nav-logo" />
+    <h2>Codex Events</h2>
+  </div>
+
+  <main class="event-section">
+    <div class="events-box">
+      <div id="pastEvents" class="box">Past Events</div>
+      <div id="upcomingEvents" class="box">Upcoming Events</div>
+    </div>
+
+    <section class="current-event">
+      <h3 id="eventName">Current Event: —</h3>
+      <p id="question">Question: —</p>
+      <div id="timer" class="timer">--:--</div>
+      <button id="submitBtn" class="btn">Submit Code</button>
+    </section>
+
+    <aside id="leaderboard" class="leaderboard hidden">
+      <h3>Leaderboard</h3>
+      <ol id="leaderboardList"></ol>
+    </aside>
+  </main>
+
+  <!-- Firebase & App scripts -->
+  <script type="module" src="js/firebase.js"></script>
+  <script src="js/events.js"></script>
+</body>
+</html>

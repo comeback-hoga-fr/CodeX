@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Codex Admin</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="navbar">
+    <img src="assets/logo.png" alt="Codex Logo" class="nav-logo" />
+    <h2>Codex Admin Panel</h2>
+  </div>
+
+  <main class="admin-section">
+    <section class="manage">
+      <h3>Schedule an Event</h3>
+      <form id="eventForm">
+        <label>Event Name<br><input id="evName" required></label><br>
+        <label>Timeout (seconds)<br><input id="evTimeout" type="number" required value="600"></label><br>
+        <label>Question (text)<br><textarea id="evQuestion" rows="4" required></textarea></label><br>
+        <button class="btn" type="submit">Schedule Event</button>
+      </form>
+    </section>
+
+    <section class="scheduled">
+      <h3>Scheduled Events</h3>
+      <ul id="scheduledList"></ul>
+    </section>
+
+    <section class="active">
+      <h3>Active Event Dashboard</h3>
+      <div id="activeEventArea">No active event.</div>
+      <div id="submissionsArea" class="hidden">
+        <h4>Submissions</h4>
+        <table id="subsTable">
+          <thead><tr><th>Name</th><th>Time</th><th>Qualified</th><th>Actions</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="js/firebase.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>
