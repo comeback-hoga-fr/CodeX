@@ -1,66 +1,557 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin Panel</title>
-<script src="https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js"></script>
-<style>
-  body { font-family: sans-serif; padding: 2rem; background: #fafafa; }
-    table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
-      th, td { border: 1px solid #ccc; padding: 0.5rem; }
-      </style>
-      </head>
-      <body>
-      
-      <h1>Admin Panel</h1>
-      <button id="startBtn">Start Event</button>
-      <table>
-        <thead>
-            <tr>
-                  <th>User</th>
-                        <th>Question</th>
-                              <th>Time Spent (ms)</th>
-                                    <th>Answer</th>
-                                        </tr>
-                                          </thead>
-                                            <tbody id="responses"></tbody>
-                                            </table>
-                                            
-                                            <script>
-                                              // Firebase config
-                                                const firebaseConfig = {
-                                                apiKey: "AIzaSyDz5-E1-qZ4VLcOQqmsiEh6iXIkU-8VW9o",
-                                                authDomain: "codex-3d806.firebaseapp.com",
-                                                projectId: "codex-3d806",
-                                                storageBucket: "codex-3d806.firebasestorage.app",
-                                                messagingSenderId: "376789695205",
-                                                appId: "1:376789695205:web:932c02c22396429455b20c"
-                                              };
-                                                                const app = firebase.initializeApp(firebaseConfig);
-                                                                  const db = firebase.firestore();
-                                                                  
-                                                                    // Start event
-                                                                      document.getElementById("startBtn").addEventListener("click", () => {
-                                                                          db.collection("eventControl").doc("status").set({ started: true });
-                                                                              alert("Event started!");
-                                                                                });
-                                                                                
-                                                                                  // Fetch responses live
-                                                                                    db.collection("responses").onSnapshot(snapshot => {
-                                                                                        const tbody = document.getElementById("responses");
-                                                                                            tbody.innerHTML = "";
-                                                                                                snapshot.forEach(doc => {
-                                                                                                      const data = doc.data();
-                                                                                                            data.answers.forEach(a => {
-                                                                                                                    const tr = document.createElement("tr");
-                                                                                                                            tr.innerHTML = `<td>${data.user}</td><td>${a.question}</td><td>${a.timeSpent}</td><td>${a.answer}</td>`;
-                                                                                                                                    tbody.appendChild(tr);
-                                                                                                                                          });
-                                                                                                                                              });
-                                                                                                                                                });
-                                                                                                                                                </script>
-                                                                                                                                                
-                                                                                                                                                </body>
-                                                                                                                                                </html>>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CodeX | CS Data Science Community</title>
+  <meta name="description" content="CodeX: An empowering community for CS and Data Science students. Learn, grow, and master coding together." />
+  
+  <!-- Open Graph -->
+  <meta property="og:title" content="CodeX | CS Data Science Community" />
+  <meta property="og:description" content="Join a vibrant community of CS & DS students. Collaborative learning, coding challenges, and skill-building." />
+  <meta property="og:type" content="website" />
+  
+  <style>
+    :root {
+      --bg-primary: #0a0e17;
+      --bg-secondary: #0f1419;
+      --bg-card: #151b23;
+      --text-primary: #f0f6fc;
+      --text-secondary: #8b949e;
+      --brand: #3b82f6;
+      --brand-hover: #2563eb;
+      --brand-glow: rgba(59, 130, 246, 0.3);
+      --accent: #a855f7;
+      --border: #21262d;
+      --glow: rgba(168, 85, 247, 0.15);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* Animated background gradient */
+    body::before {
+      content: '';
+      position: fixed;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle at 50% 50%, var(--glow) 0%, transparent 50%);
+      animation: rotate 20s linear infinite;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    @keyframes rotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    /* Header */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: rgba(10, 14, 23, 0.8);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      z-index: 100;
+      transition: all 0.3s ease;
+    }
+
+    header.scrolled {
+      background: rgba(10, 14, 23, 0.95);
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+    }
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 0;
+    }
+
+    .logo {
+      font-size: 1.75rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--brand), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.5px;
+    }
+
+    /* Hero Section */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 8rem 0 4rem;
+      position: relative;
+    }
+
+    .hero-content {
+      max-width: 800px;
+      animation: fadeInUp 0.8s ease-out;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .hero h1 {
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+      background: linear-gradient(135deg, var(--text-primary), var(--brand));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero .subtitle {
+      font-size: clamp(1.1rem, 2vw, 1.5rem);
+      color: var(--text-secondary);
+      margin-bottom: 3rem;
+      font-weight: 300;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      background: rgba(59, 130, 246, 0.1);
+      color: var(--brand);
+      padding: 0.5rem 1rem;
+      border-radius: 2rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      margin-bottom: 2rem;
+      border: 1px solid rgba(59, 130, 246, 0.2);
+    }
+
+    /* About Section */
+    .about {
+      padding: 6rem 0;
+      background: linear-gradient(180deg, transparent, var(--bg-secondary) 50%);
+    }
+
+    .about h2 {
+      font-size: clamp(2rem, 4vw, 3rem);
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin-top: 4rem;
+    }
+
+    .feature-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 1rem;
+      padding: 2rem;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--brand), var(--accent));
+      transform: scaleX(0);
+      transition: transform 0.3s ease;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--brand);
+      box-shadow: 0 12px 40px var(--brand-glow);
+    }
+
+    .feature-card:hover::before {
+      transform: scaleX(1);
+    }
+
+    .feature-icon {
+      width: 3rem;
+      height: 3rem;
+      background: linear-gradient(135deg, var(--brand), var(--accent));
+      border-radius: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+      font-size: 1.5rem;
+    }
+
+    .feature-card h3 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      color: var(--text-primary);
+    }
+
+    .feature-card p {
+      color: var(--text-secondary);
+      line-height: 1.7;
+    }
+
+    /* Why Join Section */
+    .why-join {
+      padding: 6rem 0;
+      background: var(--bg-secondary);
+    }
+
+    .why-join h2 {
+      font-size: clamp(2rem, 4vw, 3rem);
+      margin-bottom: 3rem;
+      text-align: center;
+    }
+
+    .benefits-list {
+      max-width: 700px;
+      margin: 0 auto;
+      list-style: none;
+    }
+
+    .benefits-list li {
+      padding: 1.5rem;
+      background: var(--bg-card);
+      border-left: 3px solid var(--brand);
+      margin-bottom: 1rem;
+      border-radius: 0.5rem;
+      transition: all 0.3s ease;
+    }
+
+    .benefits-list li:hover {
+      transform: translateX(10px);
+      box-shadow: 0 4px 20px rgba(59, 130, 246, 0.2);
+    }
+
+    .benefits-list strong {
+      color: var(--brand);
+      font-size: 1.1rem;
+    }
+
+    /* CTA Section */
+    .cta {
+      padding: 6rem 0;
+      text-align: center;
+    }
+
+    .cta h2 {
+      font-size: clamp(2rem, 4vw, 3rem);
+      margin-bottom: 1rem;
+    }
+
+    .cta p {
+      color: var(--text-secondary);
+      font-size: 1.25rem;
+      margin-bottom: 2rem;
+    }
+
+    /* Floating Navigation */
+    .floating-nav {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 1rem;
+      z-index: 1000;
+      background: rgba(15, 20, 25, 0.95);
+      backdrop-filter: blur(12px);
+      padding: 0.75rem 1.5rem;
+      border-radius: 3rem;
+      border: 1px solid var(--border);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    }
+
+    .nav-btn {
+      width: 3.5rem;
+      height: 3.5rem;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--brand), var(--accent));
+      border: none;
+      color: white;
+      font-size: 1.5rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .nav-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, var(--accent), var(--brand));
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .nav-btn:hover::before {
+      opacity: 1;
+    }
+
+    .nav-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px var(--brand-glow);
+    }
+
+    .nav-btn svg {
+      position: relative;
+      z-index: 1;
+    }
+
+    .nav-tooltip {
+      position: absolute;
+      bottom: calc(100% + 0.5rem);
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--bg-card);
+      color: var(--text-primary);
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      font-size: 0.875rem;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      border: 1px solid var(--border);
+    }
+
+    .nav-btn:hover .nav-tooltip {
+      opacity: 1;
+    }
+
+    /* Footer */
+    footer {
+      background: var(--bg-secondary);
+      border-top: 1px solid var(--border);
+      padding: 3rem 0;
+      text-align: center;
+    }
+
+    footer p {
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+    }
+
+    .footer-brand {
+      font-size: 1.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--brand), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.5rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .hero {
+        padding: 6rem 0 3rem;
+      }
+
+      .about-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .floating-nav {
+        bottom: 1rem;
+        padding: 0.5rem 1rem;
+      }
+
+      .nav-btn {
+        width: 3rem;
+        height: 3rem;
+        font-size: 1.25rem;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header id="header">
+    <div class="container">
+      <nav>
+        <div class="logo">CodeX</div>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container">
+        <div class="hero-content">
+          <div class="hero-badge">🚀 CS & Data Science Community</div>
+          <h1>Where Code Meets Curiosity</h1>
+          <p class="subtitle">An empowering space for CS and Data Science students to learn, collaborate, and master coding together.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="about">
+      <div class="container">
+        <h2>Your Gateway to Mastering Coding</h2>
+        <p style="text-align: center; color: var(--text-secondary); max-width: 700px; margin: 0 auto 2rem;">
+          At CodeX, we believe every CS DS student deserves an empowering space to learn, grow, and collaborate. Whether you're just starting your coding journey or looking to deepen your skills, CodeX is here to support you every step of the way.
+        </p>
+
+        <div class="about-grid">
+          <div class="feature-card">
+            <div class="feature-icon">💡</div>
+            <h3>What is CodeX?</h3>
+            <p>A vibrant community built exclusively for Computer Science and Data Science students. It's more than just a group—it's a gateway to collaborative learning, skill-building, and exciting coding challenges.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">🎯</div>
+            <h3>Hands-On Learning</h3>
+            <p>Gain practical experience with Python, algorithms, machine learning, data structures, and cutting-edge technologies through real-world projects and challenges.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">🤝</div>
+            <h3>Inclusive Community</h3>
+            <p>Whether you're a beginner or already have experience, CodeX welcomes all levels. Connect with peers who share your passion for technology and innovation.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="why-join">
+      <div class="container">
+        <h2>Why Join CodeX?</h2>
+        <ul class="benefits-list">
+          <li>
+            <strong>Learn Together</strong><br>
+            Connect with fellow CS DS students passionate about coding and create lasting professional relationships.
+          </li>
+          <li>
+            <strong>Grow Your Skills</strong><br>
+            Access hands-on workshops, coding challenges, and mentorship opportunities to accelerate your learning.
+          </li>
+          <li>
+            <strong>Stay Ahead</strong><br>
+            Be the first to access upcoming interactive features and exclusive resources designed to enhance your journey.
+          </li>
+          <li>
+            <strong>Build Your Portfolio</strong><br>
+            Work on real projects that showcase your abilities and make you stand out to future employers.
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="cta">
+      <div class="container">
+        <h2>Ready to Get Started?</h2>
+        <p>Join CodeX today and become part of a supportive, learning-driven community.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div class="footer-brand">CodeX</div>
+      <p>&copy; 2025 CodeX. Empowering CS & Data Science students.</p>
+    </div>
+  </footer>
+
+  <!-- Floating Navigation -->
+  <div class="floating-nav">
+    <button class="nav-btn" onclick="window.location.href='index.html'" aria-label="Home">
+      <span class="nav-tooltip">Home</span>
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+      </svg>
+    </button>
+    <button class="nav-btn" onclick="window.location.href='events.html'" aria-label="Events">
+      <span class="nav-tooltip">Events</span>
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+        <line x1="16" y1="2" x2="16" y2="6"></line>
+        <line x1="8" y1="2" x2="8" y2="6"></line>
+        <line x1="3" y1="10" x2="21" y2="10"></line>
+      </svg>
+    </button>
+  </div>
+
+  <script>
+    // Header scroll effect
+    const header = document.getElementById('header');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 100) {
+        header.classList.add('scrolled');
+      } else {
+        header.classList.remove('scrolled');
+      }
+    });
+
+    // Smooth scroll for internal links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+  </script>
+</body>
+</html>

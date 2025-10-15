@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CodeX | Live Event</title>
+
+  <meta name="description" content="CodeX Live Event for CS & Data Science enthusiasts." />
+
+  <style>
+    :root {
+      --bg-primary: #0a0e17;
+      --bg-secondary: #0f1419;
+      --bg-card: #151b23;
+      --text-primary: #f0f6fc;
+      --text-secondary: #8b949e;
+      --brand: #3b82f6;
+      --brand-hover: #2563eb;
+      --accent: #a855f7;
+      --border: #21262d;
+      --glow: rgba(59, 130, 246, 0.3);
+    }
+
+    body {
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+      margin: 0;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      background: rgba(10, 14, 23, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      z-index: 100;
+    }
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    .logo {
+      font-size: 1.75rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--brand), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    main {
+      margin-top: 100px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 80vh;
+    }
+
+    .event-container {
+      max-width: 800px;
+      width: 100%;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 1rem;
+      padding: 2rem;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+      text-align: center;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 4vw, 3rem);
+      background: linear-gradient(135deg, var(--text-primary), var(--brand));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 1rem;
+    }
+
+    .starting-soon {
+      font-size: 1.5rem;
+      color: var(--accent);
+      animation: blink 1.5s infinite alternate;
+      margin-top: 3rem;
+    }
+
+    @keyframes blink {
+      from { opacity: 0.3; }
+      to { opacity: 1; }
+    }
+
+    .question-box {
+      text-align: left;
+      background: var(--bg-secondary);
+      padding: 1.5rem;
+      border-radius: 1rem;
+      border: 1px solid var(--border);
+      margin-bottom: 1rem;
+    }
+
+    .timer {
+      font-size: 1.25rem;
+      color: var(--brand);
+      margin: 1rem 0;
+    }
+
+    textarea {
+      width: 100%;
+      height: 200px;
+      border-radius: 0.75rem;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+      padding: 1rem;
+      resize: vertical;
+      font-family: 'Consolas', monospace;
+    }
+
+    button {
+      margin-top: 1rem;
+      padding: 0.75rem 2rem;
+      border: none;
+      border-radius: 0.75rem;
+      background: linear-gradient(135deg, var(--brand), var(--accent));
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px var(--glow);
+    }
+
+    footer {
+      background: var(--bg-secondary);
+      border-top: 1px solid var(--border);
+      text-align: center;
+      padding: 2rem 0;
+      margin-top: 3rem;
+    }
+
+    .footer-brand {
+      font-size: 1.5rem;
+      background: linear-gradient(135deg, var(--brand), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .floating-nav {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 1rem;
+      background: rgba(15, 20, 25, 0.95);
+      backdrop-filter: blur(12px);
+      padding: 0.75rem 1.5rem;
+      border-radius: 3rem;
+      border: 1px solid var(--border);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    }
+
+    .nav-btn {
+      width: 3.5rem;
+      height: 3.5rem;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--brand), var(--accent));
+      border: none;
+      color: white;
+      font-size: 1.5rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .nav-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px var(--glow);
+    }
+
+    .nav-tooltip {
+      position: absolute;
+      bottom: calc(100% + 0.5rem);
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--bg-card);
+      color: var(--text-primary);
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      font-size: 0.875rem;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      border: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    .nav-btn:hover .nav-tooltip { opacity: 1; }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <nav>
+      <div class="logo">CodeX</div>
+    </nav>
+  </header>
+
+  <main>
+    <div class="event-container">
+      <h1 id="eventTitle">Fetching event...</h1>
+      <div id="content">
+        <p class="starting-soon">⏳ Starting soon...</p>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-brand">CodeX</div>
+    <p>&copy; 2025 CodeX | Empowering CS & DS students</p>
+  </footer>
+
+  <!-- Floating Navigation -->
+  <div class="floating-nav">
+    <button class="nav-btn" onclick="window.location.href='index.html'" aria-label="Home">
+      <span class="nav-tooltip">Home</span>🏠
+    </button>
+    <button class="nav-btn" onclick="window.location.href='events.html'" aria-label="Events">
+      <span class="nav-tooltip">Events</span>📅
+    </button>
+  </div>
+
+ 
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, doc, onSnapshot, addDoc, collection } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDz5-E1-qZ4VLcOQqmsiEh6iXIkU-8VW9o",
+  authDomain: "codex-3d806.firebaseapp.com",
+  projectId: "codex-3d806",
+  storageBucket: "codex-3d806.firebasestorage.app",
+  messagingSenderId: "376789695205",
+  appId: "1:376789695205:web:932c02c22396429455b20c"
+};  
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const eventRef = doc(db, "events", "currentEvent");
+
+const titleEl = document.getElementById("eventTitle");
+const contentDiv = document.getElementById("content");
+
+let username = localStorage.getItem("codex_name") || null;
+
+function askUsername() {
+  if (!username) {
+    username = prompt("Enter your name:");
+    if (username) localStorage.setItem("codex_name", username);
+  }
+}
+
+function renderEvent(data) {
+  titleEl.textContent = data.title || "CodeX Event";
+  if (!data.started) {
+    contentDiv.innerHTML = `<p class="starting-soon">⏳ Starting soon...</p>`;
+    return;
+  }
+
+  const startTime = data.startTime;
+  const now = Date.now();
+  const elapsed = Math.floor((now - startTime) / 1000); // seconds passed
+  const questionDuration = 300; // 5 min per question
+  const index = Math.floor(elapsed / questionDuration);
+  const questions = data.questions || [];
+
+  if (index >= questions.length) {
+    contentDiv.innerHTML = `<h2>🎉 Thank you for participating!</h2>`;
+    return;
+  }
+
+  const q = questions[index];
+  const remaining = questionDuration - (elapsed % questionDuration);
+
+  renderQuestion(q, index, remaining, startTime);
+}
+
+function renderQuestion(q, index, remaining, startTime) {
+  clearInterval(window.timerInterval);
+
+  contentDiv.innerHTML = `
+    <div class="question-box">
+      <strong>Question ${index + 1}:</strong><br>${q.text}
+    </div>
+    <div class="timer" id="timer">Time Left: ${formatTime(remaining)}</div>
+    <textarea id="codeArea" placeholder="Write your code here..."></textarea><br>
+    <button id="submitBtn">Submit</button>
+  `;
+
+  const timerEl = document.getElementById("timer");
+  const submitBtn = document.getElementById("submitBtn");
+
+  window.timerInterval = setInterval(() => {
+    const now = Date.now();
+    const elapsed = Math.floor((now - startTime) / 1000);
+    const currentIndex = Math.floor(elapsed / 300);
+    const rem = 300 - (elapsed % 300);
+
+    if (rem <= 0) {
+      clearInterval(window.timerInterval);
+      renderEvent({ ...window.latestEventData }); // auto move to next
+    } else {
+      timerEl.textContent = `Time Left: ${formatTime(rem)}`;
+    }
+  }, 1000);
+
+  submitBtn.addEventListener("click", async () => {
+  askUsername();
+  const code = document.getElementById("codeArea").value.trim();
+  if (!code) return alert("Please write some code first!");
+
+  // Firestore imports (if not already at top)
+  const { collection, query, where, getDocs, addDoc } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
+
+  // Check if already submitted
+  const qCheck = query(
+    collection(db, "submissions"),
+    where("name", "==", username),
+    where("questionId", "==", q.id)
+  );
+  const existing = await getDocs(qCheck);
+  if (!existing.empty) {
+    alert("❌ You’ve already submitted this question!");
+    return;
+  }
+
+  // Calculate time spent in seconds
+  const now = Date.now();
+  const totalElapsed = Math.floor((now - startTime) / 1000);
+  const timeSpent = totalElapsed - (index * 300); // 5 min per question
+
+  // Save submission
+  await addDoc(collection(db, "submissions"), {
+    name: username,
+    questionId: q.id,
+    code,
+    timeSpent,
+    timestamp: now
+  });
+
+  alert(`✅ Submitted! (Time spent: ${timeSpent}s)`);
+
+  // Move to next question automatically
+  currentIndex++;
+  renderEvent(window.latestEventData);
+});
+
+
+}
+
+function formatTime(sec) {
+  const m = String(Math.floor(sec / 60)).padStart(2, "0");
+  const s = String(sec % 60).padStart(2, "0");
+  return `${m}:${s}`;
+}
+
+onSnapshot(eventRef, (snap) => {
+  if (snap.exists()) {
+    window.latestEventData = snap.data();
+    renderEvent(snap.data());
+  } else {
+    titleEl.textContent = "No event found!";
+  }
+});
+</script>
+
+
+</body>
+</html>

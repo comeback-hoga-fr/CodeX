@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CodeX | Submissions Viewer</title>
+
+  <style>
+    :root {
+      --bg-primary: #0a0e17;
+      --bg-card: #151b23;
+      --text-primary: #f0f6fc;
+      --text-secondary: #8b949e;
+      --brand: #3b82f6;
+      --accent: #a855f7;
+      --border: #21262d;
+    }
+
+    body {
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: system-ui, sans-serif;
+      margin: 0;
+      padding: 2rem;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2rem;
+      background: linear-gradient(135deg, var(--brand), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 1rem;
+    }
+
+    .submissions-container {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      border-bottom: 1px solid var(--border);
+      padding: 0.75rem;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: rgba(255,255,255,0.05);
+      font-weight: 600;
+    }
+
+    pre {
+      background: rgba(255,255,255,0.05);
+      border-radius: 0.5rem;
+      padding: 0.75rem;
+      font-size: 0.9rem;
+      overflow-x: auto;
+      color: var(--text-secondary);
+    }
+
+    .copy-btn {
+      background: linear-gradient(135deg, var(--brand), var(--accent));
+      border: none;
+      color: white;
+      font-weight: 600;
+      border-radius: 0.5rem;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      margin-bottom: 1rem;
+    }
+
+    .copy-btn:hover {
+      opacity: 0.9;
+      transform: translateY(-2px);
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 2rem;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>CodeX Submissions Viewer</h1>
+
+  <div class="submissions-container">
+    <button class="copy-btn" id="copyBtn">📋 Copy All for AI Review</button>
+    <table id="submissionsTable">
+      <thead>
+        <tr>
+          <th>👤 Name</th>
+          <th>🧠 Question</th>
+          <th>⏱️ Time Spent (s)</th>
+          <th>🗓️ Timestamp</th>
+          <th>💻 Code</th>
+        </tr>
+      </thead>
+      <tbody id="submissionsBody">
+        <tr><td colspan="5">Loading...</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="footer">
+    &copy; 2025 CodeX | Admin Tools
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDz5-E1-qZ4VLcOQqmsiEh6iXIkU-8VW9o",
+      authDomain: "codex-3d806.firebaseapp.com",
+      projectId: "codex-3d806",
+      storageBucket: "codex-3d806.firebasestorage.app",
+      messagingSenderId: "376789695205",
+      appId: "1:376789695205:web:932c02c22396429455b20c"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const submissionsBody = document.getElementById("submissionsBody");
+    const copyBtn = document.getElementById("copyBtn");
+
+    async function loadSubmissions() {
+      const qSnap = await getDocs(query(collection(db, "submissions"), orderBy("timestamp", "desc")));
+      submissionsBody.innerHTML = "";
+
+      const allRows = [];
+      qSnap.forEach((doc) => {
+        const s = doc.data();
+        const time = new Date(s.timestamp).toLocaleString();
+
+        const row = `
+          <tr>
+            <td>${s.name || "-"}</td>
+            <td>${s.questionId || "-"}</td>
+            <td>${s.timeSpent ?? "-"}</td>
+            <td>${time}</td>
+            <td><pre>${s.code || ""}</pre></td>
+          </tr>`;
+        submissionsBody.innerHTML += row;
+
+        allRows.push(`Name: ${s.name}\nQuestion: ${s.questionId}\nTime: ${s.timeSpent}s\nCode:\n${s.code}\n--------------------------`);
+      });
+
+      copyBtn.addEventListener("click", () => {
+        const formatted = allRows.join("\n\n");
+        navigator.clipboard.writeText(formatted);
+        alert("✅ Copied all submissions — paste into AI for evaluation!");
+      });
+    }
+
+    loadSubmissions();
+  </script>
+</body>
+</html>
