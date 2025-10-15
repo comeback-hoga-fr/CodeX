@@ -1,47 +1,1279 @@
 <!DOCTYPE html>
+
 <html lang="en">
+
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Codex Admin</title>
-  <link rel="stylesheet" href="css/style.css" />
+
+<meta charset="utf-8" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>Codex Admin Panel — Advanced</title>
+
+<style>
+
+/* -------------------------------------
+   UPGRADED CSS (Incorporating modern aesthetics and responsiveness)
+   ------------------------------------- */
+
+:root {
+    --color-primary: #1976D2; /* Blue */
+    --color-primary-dark: #1565C0;
+    --color-success: #4CAF50;
+    --color-danger: #D32F2F;
+    --color-warning: #FFC107;
+    --color-text: #263238;
+    --color-background: #F4F6F8;
+    --color-surface: #FFFFFF;
+    --color-border: #E0E0E0;
+    --shadow-light: 0 1px 3px rgba(0,0,0,0.1);
+    --shadow-medium: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+body {
+    font-family: 'Inter', system-ui, sans-serif;
+    margin: 0;
+    background: var(--color-background);
+    color: var(--color-text);
+    line-height: 1.6;
+}
+
+/* --- Navigation Bar --- */
+.navbar {
+    background: var(--color-primary);
+    color: var(--color-surface);
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    box-shadow: var(--shadow-medium);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.navbar img {
+    height: 40px;
+    border-radius: 4px;
+}
+
+h2 {
+    margin: 0;
+    font-weight: 600;
+    font-size: 1.5rem;
+}
+
+/* --- Main Layout --- */
+main {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    padding: 1.5rem;
+    gap: 1.5rem;
+}
+
+/* Mobile Layout Adjustment */
+@media (max-width: 1024px) {
+    main {
+        grid-template-columns: 1fr; /* Stack panels on smaller screens */
+    }
+}
+
+/* --- Section Panels --- */
+section {
+    background: var(--color-surface);
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: var(--shadow-light);
+    transition: transform 0.2s;
+}
+
+section:hover {
+    box-shadow: var(--shadow-medium);
+}
+
+h3 {
+    margin-top: 0;
+    color: var(--color-primary-dark);
+    font-size: 1.3rem;
+    border-bottom: 2px solid var(--color-border);
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+h4 {
+    color: var(--color-text);
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+}
+
+/* --- Form Elements --- */
+label {
+    display: block;
+    margin-top: 12px;
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+input, textarea, select {
+    width: 100%;
+    margin-top: 6px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--color-border);
+    font-size: 1rem;
+    box-sizing: border-box;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input:focus, textarea:focus, select:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.2);
+    outline: none;
+}
+
+/* --- Buttons --- */
+button {
+    margin-top: 15px;
+    background: var(--color-primary);
+    color: white;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.2s, transform 0.1s;
+    white-space: nowrap;
+}
+
+button:hover {
+    background: var(--color-primary-dark);
+}
+
+button:active {
+    transform: scale(0.98);
+}
+
+button:disabled {
+    background: #B0BEC5;
+    cursor: not-allowed;
+}
+
+.small {
+    padding: 6px 10px;
+    font-size: 0.85rem;
+    margin-top: 8px;
+}
+
+/* Specific button colors */
+.startBtn { background: var(--color-success); }
+.startBtn:hover { background: #388E3C; }
+
+.deleteBtn, .stopQ { background: var(--color-danger); }
+.deleteBtn:hover, .stopQ:hover { background: #C62828; }
+
+.pauseQ { background: #FF9800; }
+.pauseQ:hover { background: #FB8C00; }
+
+.viewCodeBtn { background: #607D8B; }
+.viewCodeBtn:hover { background: #455A64; }
+
+/* --- List (Events) --- */
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+li {
+    background: var(--color-background);
+    padding: 12px 15px;
+    border-radius: 8px;
+    margin-top: 10px;
+    border-left: 5px solid var(--color-primary);
+    line-height: 1.4;
+}
+
+li strong {
+    display: block;
+    font-size: 1.1rem;
+    margin-bottom: 4px;
+}
+
+/* --- Table (Submissions) --- */
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-top: 15px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+th, td {
+    border: none;
+    padding: 10px 12px;
+    font-size: 0.9rem;
+    text-align: left;
+}
+
+th {
+    background: var(--color-border);
+    font-weight: 600;
+    color: var(--color-primary-dark);
+    text-transform: uppercase;
+}
+
+tr:nth-child(even) {
+    background-color: #F8F8F8;
+}
+
+/* --- Custom Controls --- */
+.hidden { display: none; }
+
+.controls {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.q-row {
+    border: 1px solid var(--color-border);
+    padding: 12px;
+    border-radius: 8px;
+    margin-top: 10px;
+    background: #fff;
+    box-shadow: var(--shadow-light);
+}
+
+.q-row strong {
+    font-size: 1rem;
+    color: var(--color-text);
+}
+
+#activeEventArea {
+    padding: 12px;
+    background: #E3F2FD;
+    border-radius: 8px;
+    border: 1px solid #90CAF9;
+    color: #1A237E;
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+    font-weight: 500;
+}
+
+/* Submission Select and Load Button Alignment */
+#submissionsArea > div {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+}
+
+#submissionsArea select {
+    flex-grow: 1;
+    margin-top: 0;
+}
+
+#loadSubsBtn {
+    flex-shrink: 0;
+    margin-top: 0;
+}
+
+/* Small input field inside Q-row */
+.q-row input[type="number"] {
+    width: 100px !important;
+    padding: 6px 8px;
+    font-size: 0.9rem;
+    margin-top: 0;
+}
+
+</style>
+
 </head>
+
 <body>
-  <div class="navbar">
-    <img src="assets/logo.png" alt="Codex Logo" class="nav-logo" />
-    <h2>Codex Admin Panel</h2>
-  </div>
 
-  <main class="admin-section">
-    <section class="manage">
-      <h3>Schedule an Event</h3>
-      <form id="eventForm">
-        <label>Event Name<br><input id="evName" required></label><br>
-        <label>Timeout (seconds)<br><input id="evTimeout" type="number" required value="600"></label><br>
-        <label>Question (text)<br><textarea id="evQuestion" rows="4" required></textarea></label><br>
-        <button class="btn" type="submit">Schedule Event</button>
-      </form>
-    </section>
+<div class="navbar">
 
-    <section class="scheduled">
-      <h3>Scheduled Events</h3>
-      <ul id="scheduledList"></ul>
-    </section>
+<img src="https://i.imgur.com/DvTqK3v.png" alt="Codex Logo">
 
-    <section class="active">
-      <h3>Active Event Dashboard</h3>
-      <div id="activeEventArea">No active event.</div>
-      <div id="submissionsArea" class="hidden">
-        <h4>Submissions</h4>
-        <table id="subsTable">
-          <thead><tr><th>Name</th><th>Time</th><th>Qualified</th><th>Actions</th></tr></thead>
-          <tbody></tbody>
-        </table>
-      </div>
-    </section>
-  </main>
+<h2>Codex Admin Panel — Advanced</h2>
 
-  <script type="module" src="js/firebase.js"></script>
-  <script src="js/admin.js"></script>
+</div>
+
+
+<main>
+
+<section>
+
+<h3>Schedule an Event</h3>
+
+<form id="eventForm">
+
+<label>Event Name <input id="evName" required></label>
+
+<label>Event Default Timeout (seconds) <input id="evTimeout" type="number" required value="600"></label>
+
+<label>Number of Questions <input id="numQuestions" type="number" min="1" value="1" required></label>
+
+<div id="questionsContainer">
+
+<label>Question 1 <textarea class="evQuestion" rows="2" required></textarea></label>
+
+</div>
+
+<button type="submit">Schedule Event</button>
+
+</form>
+
+</section>
+
+
+<section>
+
+<h3>Events</h3>
+
+<ul id="scheduledList"></ul>
+
+</section>
+
+
+<section>
+
+<h3>Active Event Dashboard</h3>
+
+<div id="activeEventArea">No active event.</div>
+
+
+<div id="questionsArea" class="hidden">
+
+<h4>Questions</h4>
+
+<div id="questionsList"></div>
+
+</div>
+
+
+<div id="submissionsArea" class="hidden">
+
+<h4>Submissions for Selected Q</h4>
+
+<div>
+
+<select id="subQSelect"></select>
+
+<button id="loadSubsBtn" class="small">Load submissions (one-time)</button>
+
+</div>
+
+<table>
+<thead><tr><th>Name</th><th>Time</th><th>Approved</th><th>Actions</th></tr></thead>
+
+<tbody id="subsTableBody"><tr><td colspan="4">No submissions loaded.</td></tr></tbody>
+
+</table>
+
+</div>
+
+</section>
+
+</main>
+
+
+<script type="module">
+
+/* eslint-disable no-console */
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
+
+import {
+
+getFirestore, collection, addDoc, onSnapshot, doc, deleteDoc, updateDoc, query, orderBy, where,
+
+getDocs, serverTimestamp, getDoc
+
+} from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
+
+
+/* -----------------------
+
+Firebase config
+
+----------------------- */
+
+const firebaseConfig = {
+
+apiKey: "AIzaSyDz5-E1-qZ4VLcOQqmsiEh6iXIkU-8VW9o",
+
+authDomain: "codex-3d806.firebaseapp.com",
+
+projectId: "codex-3d806",
+
+storageBucket: "codex-3d806.firebasestorage.app",
+
+messagingSenderId: "376789695205",
+
+appId: "1:376789695205:web:932c02c22396429455b20c"
+
+};
+
+const app = initializeApp(firebaseConfig);
+
+const db = getFirestore(app);
+
+
+/* -----------------------
+
+DOM refs
+
+----------------------- */
+
+const eventForm = document.getElementById('eventForm');
+
+const scheduledList = document.getElementById('scheduledList');
+
+const activeEventArea = document.getElementById('activeEventArea');
+
+const questionsArea = document.getElementById('questionsArea');
+
+const questionsList = document.getElementById('questionsList');
+
+const subsTableBody = document.getElementById('subsTableBody');
+
+const submissionsArea = document.getElementById('submissionsArea');
+
+const subQSelect = document.getElementById('subQSelect');
+
+const loadSubsBtn = document.getElementById('loadSubsBtn');
+
+
+const evNameInput = document.getElementById('evName');
+
+const evTimeoutInput = document.getElementById('evTimeout');
+
+const numQuestionsInput = document.getElementById('numQuestions');
+
+const questionsContainer = document.getElementById('questionsContainer');
+
+
+/* -----------------------
+
+Local state
+
+----------------------- */
+
+let activeEventDoc = null; // Firestore doc snapshot of active event
+
+let questionTimers = {}; // { qId: {remaining, intervalId} }
+
+let localActiveQuestionId = null; // currently selected question for submission view
+
+
+/* -----------------------
+
+Utility: ID + helpers
+
+----------------------- */
+
+const generateQuestionId = (index) => `q${Date.now()}-${index}`;
+
+
+function secToMMSS(s) {
+
+s = Math.max(0, Math.floor(s));
+
+const mm = Math.floor(s / 60).toString().padStart(2, '0');
+
+const ss = (s % 60).toString().padStart(2, '0');
+
+return `${mm}:${ss}`;
+
+}
+
+
+function nowISO() { return new Date().toISOString(); }
+
+
+/* -----------------------
+
+Dynamic question fields for scheduling
+
+----------------------- */
+
+numQuestionsInput.addEventListener('change', () => {
+
+const num = Math.max(1, parseInt(numQuestionsInput.value || 1));
+
+questionsContainer.innerHTML = '';
+
+for (let i = 0; i < num; i++) {
+
+const label = document.createElement('label');
+
+label.innerHTML = `Question ${i + 1} <textarea class="evQuestion" rows="2" required></textarea>`;
+
+questionsContainer.appendChild(label);
+
+}
+
+});
+
+
+/* -----------------------
+
+Schedule event (create)
+
+----------------------- */
+
+eventForm.addEventListener('submit', async (e) => {
+
+e.preventDefault();
+
+const name = evNameInput.value.trim();
+
+const timeout = parseInt(evTimeoutInput.value);
+
+const qNodes = document.querySelectorAll('.evQuestion');
+
+const questions = Array.from(qNodes).map((q, idx) => ({
+
+qId: generateQuestionId(idx),
+
+text: q.value.trim(),
+
+timeout: timeout, // per-question default timeout
+
+remaining: timeout, // remaining seconds (persisted)
+
+status: 'pending' // pending|active|paused|done
+
+})).filter(q => q.text);
+
+if (!name || questions.length === 0) return alert('Please fill all fields.');
+
+try {
+
+const docRef = await addDoc(collection(db, 'events'), {
+
+name, timeout, questions, createdAt: nowISO(), started: false, paused: false, evId: null
+
+});
+
+// store evId in doc
+
+await updateDoc(doc(db, 'events', docRef.id), { evId: docRef.id });
+
+eventForm.reset();
+
+questionsContainer.innerHTML = `<label>Question 1 <textarea class="evQuestion" rows="2" required></textarea></label>`;
+
+alert('✅ Event scheduled');
+
+} catch (err) {
+
+console.error(err); alert('Error scheduling event');
+
+}
+
+});
+
+
+/* -----------------------
+
+Events list (live) — we still use onSnapshot for events list & active event discovery,
+
+but submissions are fetched only on-demand as required.
+
+----------------------- */
+
+const eventsCol = collection(db, 'events');
+
+const eventsQuery = query(eventsCol, orderBy('createdAt', 'desc'));
+
+
+onSnapshot(eventsQuery, async (snapshot) => {
+
+scheduledList.innerHTML = '';
+
+let foundActive = false;
+
+
+for (const sdoc of snapshot.docs) {
+
+const ev = sdoc.data();
+
+const li = document.createElement('li');
+
+li.innerHTML = `<strong>${ev.name}</strong> — ${ev.timeout || '—'}s<br>
+
+Questions: ${Array.isArray(ev.questions) ? ev.questions.map(q => q.text).join(' | ') : '—'}<br>`;
+
+
+// Buttons: Start / Pause / Stop / Delete
+
+const startBtn = document.createElement('button'); startBtn.textContent = 'Start';
+
+const pauseBtn = document.createElement('button'); pauseBtn.textContent = 'Pause';
+
+const stopBtn = document.createElement('button'); stopBtn.textContent = 'Stop';
+
+const delBtn = document.createElement('button'); delBtn.textContent = 'Delete';
+
+
+startBtn.className = 'small';
+pauseBtn.className = 'small pauseQ';
+stopBtn.className = 'small stopQ';
+delBtn.className = 'small deleteBtn';
+
+
+// Start event -> auto-pause other started events
+
+startBtn.onclick = async () => {
+
+try {
+
+// Auto-pause any other started events
+
+const runningSnapshot = await getDocs(query(collection(db, 'events'), where('started', '==', true)));
+
+const batchToPause = [];
+
+for (const docSnap of runningSnapshot.docs) {
+
+if (docSnap.id !== sdoc.id) {
+
+// mark previous started events as paused
+
+await updateDoc(doc(db, 'events', docSnap.id), { started: false, paused: true });
+
+}
+
+}
+
+
+// Start this event: set started true, paused false, startedAt
+
+await updateDoc(doc(db, 'events', sdoc.id), { started: true, paused: false, startedAt: nowISO(), evId: sdoc.id });
+
+
+alert(`✅ Event "${ev.name}" started (others paused).`);
+
+} catch (err) { console.error(err); alert('Failed to start event'); }
+
+};
+
+
+// Pause event: set paused=true, started=false
+
+pauseBtn.onclick = async () => {
+
+try {
+
+await updateDoc(doc(db, 'events', sdoc.id), { paused: true, started: false });
+
+alert('Event paused');
+
+} catch (err) { console.error(err); alert('Failed to pause event'); }
+
+};
+
+
+// Stop event: set started=false, paused=false, mark questions done? keep as is
+
+stopBtn.onclick = async () => {
+
+if (!confirm('Are you sure you want to STOP this event? This will mark all questions as done.')) return;
+
+try {
+
+// Optionally mark all questions status to done
+
+const snap = await getDoc(doc(db, 'events', sdoc.id));
+
+const data = snap.data();
+
+const newQuestions = (data.questions || []).map(q => ({ ...q, status: 'done', remaining: 0 }));
+
+await updateDoc(doc(db, 'events', sdoc.id), { started: false, paused: false, questions: newQuestions });
+
+alert('Event stopped and questions marked done');
+
+} catch (err) { console.error(err); alert('Failed to stop event'); }
+
+};
+
+
+delBtn.onclick = async () => {
+
+if (!confirm('Delete event? This is irreversible.')) return;
+
+try { await deleteDoc(doc(db, 'events', sdoc.id)); } catch (err) { console.error(err); }
+
+};
+
+
+li.appendChild(startBtn); li.appendChild(pauseBtn); li.appendChild(stopBtn); li.appendChild(delBtn);
+
+scheduledList.appendChild(li);
+
+
+// If this event is started, show in Active area
+
+if (ev.started) {
+
+foundActive = true;
+
+activeEventDoc = sdoc; // snapshot to use for question & submission operations
+
+renderActiveEvent(ev, sdoc.id);
+
+}
+
+}
+
+
+if (!foundActive) {
+
+activeEventDoc = null;
+
+activeEventArea.innerHTML = 'No active event.';
+
+questionsArea.classList.add('hidden');
+
+submissionsArea.classList.add('hidden');
+
+// clear local timers
+
+Object.values(questionTimers).forEach(t => { clearInterval(t.intervalId); });
+
+questionTimers = {};
+
+}
+
+});
+
+
+/* -----------------------
+
+Render Active Event + Questions UI
+
+----------------------- */
+
+async function renderActiveEvent(ev, docId) {
+
+activeEventArea.innerHTML = `<strong>${ev.name}</strong> (Event ID: ${docId})`;
+
+questionsArea.classList.remove('hidden');
+
+
+// Ensure questions array exists
+
+const questions = Array.isArray(ev.questions) ? ev.questions : [];
+
+
+questionsList.innerHTML = '';
+
+subQSelect.innerHTML = '';
+
+
+for (const q of questions) {
+
+// ensure remaining is set
+
+if (typeof q.remaining !== 'number') q.remaining = q.timeout || 0;
+
+const row = document.createElement('div');
+
+row.className = 'q-row';
+
+row.innerHTML = `<strong>Q: </strong>${q.text}<br>
+
+<small>ID: ${q.qId}</small><br>
+
+<div>Remaining: <span id="rem-${q.qId}">${secToMMSS(q.remaining)}</span></div>
+
+<div class="controls"></div>`;
+
+
+const controls = row.querySelector('.controls');
+
+
+// Start question
+
+const startQ = document.createElement('button'); startQ.textContent = 'Start Q'; startQ.className='small startBtn';
+if(q.status === 'active') startQ.disabled = true;
+
+startQ.onclick = async () => {
+
+try {
+
+// Update this question status -> active, others -> paused if needed
+
+await startQuestionInFirestore(docId, q.qId);
+
+// start local timer for UI
+
+startLocalTimer(q.qId);
+
+} catch (err) { console.error(err); alert('Failed to start question'); }
+
+};
+
+
+// Pause question
+
+const pauseQ = document.createElement('button'); pauseQ.textContent = 'Pause Q'; pauseQ.className='small pauseQ';
+if(q.status !== 'active') pauseQ.disabled = true;
+
+pauseQ.onclick = async () => {
+
+try {
+
+await pauseQuestionInFirestore(docId, q.qId);
+
+pauseLocalTimer(q.qId);
+
+} catch (err) { console.error(err); alert('Failed to pause question'); }
+
+};
+
+
+// Stop question
+
+const stopQ = document.createElement('button'); stopQ.textContent = 'Stop Q'; stopQ.className='small stopQ';
+if(q.status === 'done') stopQ.disabled = true;
+
+stopQ.onclick = async () => {
+
+if (!confirm(`Are you sure you want to STOP Question: ${q.text}?`)) return;
+
+try {
+
+await stopQuestionInFirestore(docId, q.qId);
+
+stopLocalTimer(q.qId);
+
+document.getElementById(`rem-${q.qId}`).textContent = secToMMSS(0);
+
+} catch (err) { console.error(err); alert('Failed to stop question'); }
+
+};
+
+
+// Editable remaining time when paused
+
+const remInput = document.createElement('input'); remInput.type = 'number'; remInput.min = 0; remInput.value = q.remaining;
+
+remInput.style.width = '120px';
+
+const saveRemBtn = document.createElement('button'); saveRemBtn.textContent = 'Save remaining'; saveRemBtn.className='small';
+
+saveRemBtn.onclick = async () => {
+
+try {
+
+// Only allow editing when question is paused or pending
+
+const snap = await getDoc(doc(db, 'events', docId));
+
+const eventData = snap.data();
+
+const qarr = (eventData.questions || []).map(it => it.qId === q.qId ? ({ ...it, remaining: parseInt(remInput.value) || 0 }) : it);
+
+await updateDoc(doc(db, 'events', docId), { questions: qarr });
+
+document.getElementById(`rem-${q.qId}`).textContent = secToMMSS(parseInt(remInput.value) || 0);
+
+// also update local timer store
+
+if (!questionTimers[q.qId]) questionTimers[q.qId] = { remaining: parseInt(remInput.value) || 0, intervalId: null };
+
+else questionTimers[q.qId].remaining = parseInt(remInput.value) || 0;
+
+alert('Remaining time saved to Firestore');
+
+} catch (err) { console.error(err); alert('Failed to save remaining time'); }
+
+};
+
+
+// Select question for submission viewing
+
+const viewSubsBtn = document.createElement('button'); viewSubsBtn.textContent = 'Select for Submissions'; viewSubsBtn.className='small';
+
+viewSubsBtn.onclick = () => {
+
+localActiveQuestionId = q.qId;
+
+// populate drop-down and show submissions area
+
+populateSubSelect(questions);
+
+submissionsArea.classList.remove('hidden');
+
+// Ensure the dropdown reflects the selected question immediately
+
+subQSelect.value = q.qId; 
+
+// do not auto-fetch — user must click "Load submissions"
+
+};
+
+
+controls.appendChild(startQ);
+
+controls.appendChild(pauseQ);
+
+controls.appendChild(stopQ);
+
+controls.appendChild(remInput);
+
+controls.appendChild(saveRemBtn);
+
+controls.appendChild(viewSubsBtn);
+
+
+questionsList.appendChild(row);
+
+
+// fill sub select
+
+const opt = document.createElement('option'); opt.value = q.qId; opt.textContent = `${q.text.slice(0,40)} (${q.qId})`;
+
+subQSelect.appendChild(opt);
+
+
+// initialize local timer state from persisted remaining
+
+if (!questionTimers[q.qId]) questionTimers[q.qId] = { remaining: q.remaining, intervalId: null };
+
+document.getElementById(`rem-${q.qId}`).textContent = secToMMSS(questionTimers[q.qId].remaining);
+// If question is active, restart the local timer (to ensure UI consistency on page reload)
+if (q.status === 'active') {
+    startLocalTimer(q.qId);
+}
+
+}
+
+
+// set currently selected qId if not set
+
+if (!localActiveQuestionId && subQSelect.options.length) {
+
+localActiveQuestionId = subQSelect.value;
+
+}
+
+}
+
+
+/* -----------------------
+
+Question control helpers that persist into Firestore
+
+----------------------- */
+
+async function startQuestionInFirestore(evDocId, qId) {
+
+// set this question to active, others to paused (or keep their status)
+
+const evSnap = await getDoc(doc(db, 'events', evDocId));
+
+if (!evSnap.exists()) throw new Error('Event doc missing');
+
+const data = evSnap.data();
+
+const qarr = (data.questions || []).map(q => {
+
+if (q.qId === qId) return { ...q, status: 'active' };
+
+// if another question was active, pause it and persist remaining
+
+if (q.status === 'active') return { ...q, status: 'paused', remaining: (questionTimers[q.qId]?.remaining ?? q.remaining ?? q.timeout) };
+
+return q;
+
+});
+
+await updateDoc(doc(db, 'events', evDocId), { questions: qarr });
+
+// ensure event started flag is true
+
+await updateDoc(doc(db, 'events', evDocId), { started: true, paused: false });
+
+}
+
+
+async function pauseQuestionInFirestore(evDocId, qId) {
+
+// mark question as paused and persist remaining
+
+const evSnap = await getDoc(doc(db, 'events', evDocId));
+
+const data = evSnap.data();
+// Use current local timer remaining time for persistence
+const qarr = (data.questions || []).map(q => q.qId === qId ? ({ ...q, status: 'paused', remaining: (questionTimers[qId]?.remaining ?? q.remaining ?? q.timeout) }) : q);
+
+await updateDoc(doc(db, 'events', evDocId), { questions: qarr });
+
+}
+
+
+async function stopQuestionInFirestore(evDocId, qId) {
+
+const evSnap = await getDoc(doc(db, 'events', evDocId));
+
+const data = evSnap.data();
+
+const qarr = (data.questions || []).map(q => q.qId === qId ? ({ ...q, status: 'done', remaining: 0 }) : q);
+
+await updateDoc(doc(db, 'events', evDocId), { questions: qarr });
+
+}
+
+
+/* -----------------------
+
+Local timers to update UI each second
+
+----------------------- */
+
+function startLocalTimer(qId) {
+
+// if already running, skip
+
+if (!questionTimers[qId]) questionTimers[qId] = { remaining: 0, intervalId: null };
+
+if (questionTimers[qId].intervalId) return;
+
+// run interval
+
+questionTimers[qId].intervalId = setInterval(async () => {
+
+questionTimers[qId].remaining = Math.max(0, (questionTimers[qId].remaining || 0) - 1);
+
+const el = document.getElementById(`rem-${qId}`);
+
+if (el) el.textContent = secToMMSS(questionTimers[qId].remaining);
+
+if (questionTimers[qId].remaining <= 0) {
+
+clearInterval(questionTimers[qId].intervalId);
+
+questionTimers[qId].intervalId = null;
+
+// mark question done in Firestore
+
+if (activeEventDoc) {
+
+await stopQuestionInFirestore(activeEventDoc.id, qId);
+
+}
+
+}
+
+}, 1000);
+
+}
+
+
+function pauseLocalTimer(qId) {
+
+const t = questionTimers[qId];
+
+if (t && t.intervalId) {
+
+clearInterval(t.intervalId);
+
+t.intervalId = null;
+
+// persist remaining into Firestore for consistency
+
+if (activeEventDoc) {
+
+(async () => {
+
+const evSnap = await getDoc(doc(db, 'events', activeEventDoc.id));
+
+const evData = evSnap.data();
+
+const qarr = (evData.questions || []).map(q => q.qId === qId ? ({ ...q, remaining: t.remaining }) : q);
+
+await updateDoc(doc(db, 'events', activeEventDoc.id), { questions: qarr });
+
+})();
+
+}
+
+}
+
+}
+
+
+function stopLocalTimer(qId) {
+
+const t = questionTimers[qId];
+
+if (t) {
+
+if (t.intervalId) clearInterval(t.intervalId);
+
+t.intervalId = null;
+
+t.remaining = 0;
+
+}
+
+}
+
+
+/* -----------------------
+
+Submissions: NO live listeners
+
+----------------------- */
+
+function populateSubSelect(questions) {
+
+subQSelect.innerHTML = '';
+
+for (const q of questions) {
+
+const opt = document.createElement('option');
+
+opt.value = q.qId; opt.textContent = `${q.text.slice(0,50)} (${q.qId})`;
+
+subQSelect.appendChild(opt);
+
+}
+
+// set selection to localActiveQuestionId if present
+
+if (localActiveQuestionId) subQSelect.value = localActiveQuestionId;
+
+}
+
+
+// loadSubsBtn: fetch one-time submissions for selected qId
+
+loadSubsBtn.addEventListener('click', async () => {
+
+if (!activeEventDoc) return alert('No active event selected');
+
+const qId = subQSelect.value;
+
+if (!qId) return alert('Select a question to load submissions for.');
+
+await fetchSubmissionsForQuestion(activeEventDoc.id, qId);
+
+});
+
+
+async function fetchSubmissionsForQuestion(evId, qId) {
+
+try {
+
+// Query submissions once (no onSnapshot)
+
+const subsQuery = query(collection(db, 'submissions'), where('evId', '==', evId), where('qId', '==', qId), orderBy('timestamp', 'asc'));
+
+const snap = await getDocs(subsQuery);
+
+if (snap.empty) {
+
+// UPDATED: colspan to 4
+subsTableBody.innerHTML = `<tr><td colspan="4">No submissions.</td></tr>`;
+
+return;
+
+}
+
+subsTableBody.innerHTML = '';
+
+for (const docSnap of snap.docs) {
+
+const s = docSnap.data();
+
+const tr = document.createElement('tr');
+
+const ts = s.timestamp && s.timestamp.toDate ? s.timestamp.toDate().toLocaleString() : 'N/A';
+
+// UPDATED: Removed s.qualified column. Only showing s.approved.
+tr.innerHTML = `<td>${s.name || 'Anonymous'}</td>
+
+<td>${ts}</td>
+
+<td>${s.approved ? '✅' : '❌'}</td>
+
+<td></td>`;
+
+const actionsTd = tr.querySelector('td:last-child');
+
+
+const viewBtn = document.createElement('button'); viewBtn.textContent = 'View Code'; viewBtn.className='small viewCodeBtn';
+
+viewBtn.onclick = () => alert(`Submission by ${s.name}\n\n${s.code || '(no code)'}`);
+
+actionsTd.appendChild(viewBtn);
+
+
+const approveBtn = document.createElement('button'); approveBtn.textContent = s.approved ? 'Revoke Approval' : 'Approve'; approveBtn.className='small';
+approveBtn.style.background = s.approved ? '#FF9800' : '#4CAF50'; // Warning for revoke, success for approve
+
+approveBtn.onclick = async () => {
+
+try {
+
+const newApprovalStatus = !s.approved; // Toggle status
+
+await updateDoc(doc(db, 'submissions', docSnap.id), { approved: newApprovalStatus, qualified: newApprovalStatus });
+// NOTE: We update 'qualified' to maintain consistency in the DB, 
+// even though we only display 'approved' in the UI.
+
+// Reload submissions to reflect the change visually across the whole table (optional, but clean)
+await fetchSubmissionsForQuestion(evId, qId);
+
+alert(`Submission ${newApprovalStatus ? 'approved' : 'approval revoked'}`);
+
+} catch (err) { console.error(err); alert('Approve/Revoke failed'); }
+
+};
+actionsTd.appendChild(approveBtn);
+
+
+subsTableBody.appendChild(tr);
+
+}
+
+} catch (err) {
+
+console.error(err);
+
+// UPDATED: colspan to 4
+subsTableBody.innerHTML = `<tr><td colspan="4">Failed fetching submissions.</td></tr>`;
+
+}
+
+}
+
+
+/* -----------------------
+
+On page load
+
+----------------------- */
+
+window.addEventListener('load', () => {
+
+// Nothing to do: events onSnapshot will populate active event if any.
+
+});
+
+</script>
+
 </body>
+
 </html>

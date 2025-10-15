@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Codex Events</title>
+    <meta name="description" content="Explore Codex past and upcoming events, join the current challenge, and track the leaderboard." />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: #818cf8;
+            --secondary: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --text-primary: #0f172a;
+            --text-secondary: #64748b;
+            --text-muted: #94a3b8;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-tertiary: #f1f5f9;
+            --border: #e2e8f0;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* ==================== HEADER ==================== */
+        .site-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow-md);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-logo {
+            height: 40px;
+            width: 40px;
+            object-fit: contain;
+        }
+
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: color 0.2s;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover,
+        .nav-links a[aria-current="page"] {
+            color: var(--primary);
+        }
+
+        .nav-links a[aria-current="page"]::after {
+            width: 100%;
+        }
+
+        /* ==================== MAIN LAYOUT ==================== */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .event-grid {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        @media (max-width: 1200px) {
+            .event-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ==================== CARDS ==================== */
+        .card {
+            background: var(--bg-primary);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: var(--shadow-xl);
+            transition: transform 0.2s;
+        }
+
+        .card-header {
+            border-bottom: 2px solid var(--bg-tertiary);
+            padding-bottom: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .badge-live {
+            background: #dcfce7;
+            color: #166534;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* ==================== CURRENT EVENT ==================== */
+        .current-event {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .current-event::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .event-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        #eventName {
+            font-size: 1.75rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            color: white;
+        }
+
+        .question-container {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .question-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            opacity: 0.9;
+            margin-bottom: 0.5rem;
+        }
+
+        #question {
+            font-size: 1.15rem;
+            font-weight: 500;
+            line-height: 1.6;
+        }
+
+        /* ==================== TIMER ==================== */
+        .timer-container {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .timer-label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.9;
+            margin-bottom: 1rem;
+        }
+
+        #timer {
+            font-size: 4rem;
+            font-weight: 800;
+            font-variant-numeric: tabular-nums;
+            letter-spacing: 0.1em;
+            text-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        #timer.warning {
+            color: var(--warning);
+            animation: timerPulse 1s infinite;
+        }
+
+        #timer.danger {
+            color: var(--danger);
+            animation: timerPulse 0.5s infinite;
+        }
+
+        @keyframes timerPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* ==================== BUTTON ==================== */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 1rem 2rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            width: 100%;
+        }
+
+        .btn-primary {
+            background: white;
+            color: var(--primary);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* ==================== TABS ==================== */
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            background: var(--bg-tertiary);
+            padding: 0.5rem;
+            border-radius: 12px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 0.75rem 1.5rem;
+            background: transparent;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tab-btn[aria-selected="true"] {
+            background: white;
+            color: var(--primary);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .tab-btn:hover:not([aria-selected="true"]) {
+            color: var(--text-primary);
+        }
+
+        .tab-panel {
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ==================== EVENT ITEMS ==================== */
+        .event-item {
+            padding: 1.25rem;
+            background: var(--bg-secondary);
+            border-radius: 10px;
+            border-left: 4px solid var(--primary);
+            margin-bottom: 1rem;
+            transition: all 0.2s;
+        }
+
+        .event-item:hover {
+            transform: translateX(4px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .event-item-title {
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin-bottom: 0.5rem;
+            font-size: 1.05rem;
+        }
+
+        .event-item-meta {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+
+        .event-status {
+            display: inline-block;
+            margin-top: 0.5rem;
+            padding: 0.25rem 0.75rem;
+            background: var(--warning);
+            color: white;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--text-muted);
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        /* ==================== LEADERBOARD ==================== */
+        .leaderboard-section {
+            margin-bottom: 2rem;
+        }
+
+        .leaderboard-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .leaderboard-list {
+            list-style: none;
+        }
+
+        .leaderboard-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--bg-secondary);
+            border-radius: 10px;
+            margin-bottom: 0.75rem;
+            transition: all 0.2s;
+        }
+
+        .leaderboard-item:hover {
+            background: var(--bg-tertiary);
+            transform: translateX(4px);
+        }
+
+        .rank {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--text-muted);
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .leaderboard-item:nth-child(1) .rank {
+            color: #f59e0b;
+            font-size: 1.5rem;
+        }
+
+        .leaderboard-item:nth-child(2) .rank {
+            color: #94a3b8;
+            font-size: 1.4rem;
+        }
+
+        .leaderboard-item:nth-child(3) .rank {
+            color: #cd7f32;
+            font-size: 1.3rem;
+        }
+
+        .player-info {
+            flex: 1;
+        }
+
+        .player-name {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .player-stat {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .divider {
+            height: 1px;
+            background: var(--border);
+            margin: 2rem 0;
+        }
+
+        /* ==================== MODAL ==================== */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 1rem;
+            animation: fadeIn 0.2s;
+        }
+
+        .modal.hidden {
+            display: none;
+        }
+
+        .modal-content {
+            background: var(--bg-primary);
+            border-radius: 20px;
+            padding: 2.5rem;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: var(--shadow-xl);
+            animation: slideUp 0.3s;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            margin-bottom: 2rem;
+        }
+
+        .modal-title {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-subtitle {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+        }
+
+        .form-input,
+        .form-textarea {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: all 0.2s;
+            background: var(--bg-secondary);
+        }
+
+        .form-input:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 150px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .modal-actions .btn {
+            width: auto;
+            flex: 1;
+        }
+
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-secondary);
+        }
+
+        /* ==================== RESPONSIVE ==================== */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 1rem;
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+
+            .event-grid {
+                gap: 1rem;
+            }
+
+            .card {
+                padding: 1.5rem;
+            }
+
+            #timer {
+                font-size: 3rem;
+            }
+
+            .modal-content {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="site-header">
+        <nav class="navbar">
+            <div class="nav-brand">
+                <img src="assets/logo.png" alt="Codex logo" class="nav-logo" onerror="this.style.display='none'" />
+                <h1 class="page-title">Codex Events</h1>
+            </div>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="events.html" aria-current="page">Events</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        <div class="event-grid">
+            <!-- LEFT COLUMN: Events List -->
+            <div>
+                <div class="card">
+                    <div class="tabs" role="tablist">
+                        <button id="tab-upcoming" class="tab-btn" role="tab" aria-selected="true" aria-controls="panel-upcoming">
+                            📅 Upcoming Events
+                        </button>
+                        <button id="tab-past" class="tab-btn" role="tab" aria-selected="false" aria-controls="panel-past">
+                            🕐 Past Events
+                        </button>
+                    </div>
+
+                    <div id="panel-upcoming" class="tab-panel" role="tabpanel" aria-labelledby="tab-upcoming">
+                        <div id="upcomingEvents"></div>
+                    </div>
+
+                    <div id="panel-past" class="tab-panel" role="tabpanel" aria-labelledby="tab-past" hidden>
+                        <div id="pastEvents"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT COLUMN: Current Event + Leaderboard -->
+            <div>
+                <!-- Current Event Card -->
+                <div class="card current-event">
+                    <div class="event-content">
+                        <div class="card-header" style="border-color: rgba(255,255,255,0.2)">
+                            <h2 class="card-title" style="color: white">
+                                <span class="badge badge-live">● LIVE</span>
+                                <span id="eventName">No Active Event</span>
+                            </h2>
+                        </div>
+
+                        <div class="question-container">
+                            <div class="question-label">Current Challenge</div>
+                            <div id="question">Waiting for event to start...</div>
+                        </div>
+
+                        <div class="timer-container">
+                            <div class="timer-label">Time Remaining</div>
+                            <div id="timer">--:--</div>
+                        </div>
+
+                        <button id="submitBtn" class="btn btn-primary">
+                            🚀 Submit Solution
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Leaderboard Card -->
+                <div id="leaderboardCard" class="card hidden" style="margin-top: 2rem;">
+                    <div class="card-header">
+                        <h2 class="card-title">🏆 Leaderboard</h2>
+                    </div>
+
+                    <div class="leaderboard-section">
+                        <h3 class="leaderboard-title">⚡ Fastest Solvers</h3>
+                        <ol id="qLeaderboardList" class="leaderboard-list"></ol>
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <div class="leaderboard-section">
+                        <h3 class="leaderboard-title">🎯 Overall Rankings</h3>
+                        <ol id="eventLeaderboardList" class="leaderboard-list"></ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Submission Modal -->
+    <div id="codeModal" class="modal hidden" role="dialog" aria-modal="true">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Submit Your Solution</h2>
+                <p class="modal-subtitle">Enter your details and paste your code below</p>
+            </div>
+
+            <form id="submissionForm">
+                <div class="form-group">
+                    <label for="nameInput" class="form-label">Your Name</label>
+                    <input type="text" id="nameInput" class="form-input" placeholder="Enter your name" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="codeInput" class="form-label">Your Code</label>
+                    <textarea id="codeInput" class="form-textarea" placeholder="Paste your code here..." required></textarea>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" id="closeModalBtn" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" id="submitCodeBtn" class="btn btn-primary">Submit Code</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
+        import {
+            getFirestore, collection, onSnapshot, query, orderBy,
+            addDoc, where, serverTimestamp
+        } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDz5-E1-qZ4VLcOQqmsiEh6iIkU-8VW9o",
+            authDomain: "codex-3d806.firebaseapp.com",
+            projectId: "codex-3d806",
+            storageBucket: "codex-3d806.firebase-storage.app",
+            messagingSenderId: "376789695205",
+            appId: "1:376789695205:web:932c02c22396429455b20c"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // DOM Elements
+        const pastEventsContainer = document.getElementById('pastEvents');
+        const upcomingEventsContainer = document.getElementById('upcomingEvents');
+        const eventNameEl = document.getElementById('eventName');
+        const questionEl = document.getElementById('question');
+        const timerEl = document.getElementById('timer');
+        const leaderboardCard = document.getElementById('leaderboardCard');
+        const qLeaderboardList = document.getElementById('qLeaderboardList');
+        const eventLeaderboardList = document.getElementById('eventLeaderboardList');
+        const codeModal = document.getElementById('codeModal');
+        const nameInput = document.getElementById('nameInput');
+        const codeInput = document.getElementById('codeInput');
+        const submitCodeBtn = document.getElementById('submitCodeBtn');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const submitBtn = document.getElementById('submitBtn');
+        const submissionForm = document.getElementById('submissionForm');
+
+        // Tabs
+        const tabUpcoming = document.getElementById('tab-upcoming');
+        const tabPast = document.getElementById('tab-past');
+        const panelUpcoming = document.getElementById('panel-upcoming');
+        const panelPast = document.getElementById('panel-past');
+
+        let activeEventDocId = null;
+        let activeEventData = null;
+        let activeQuestionID = null;
+        let submissionListener = null;
+        let timerInterval = null;
+        let timerEndTime = null;
+
+        // Helper Functions
+        function secToMMSS(s) {
+            s = Math.max(0, Math.floor(s));
+            const mm = Math.floor(s / 60).toString().padStart(2, '0');
+            const ss = (s % 60).toString().padStart(2, '0');
+            return `${mm}:${ss}`;
+        }
+
+        function updateTimerDisplay(seconds) {
+            timerEl.textContent = secToMMSS(seconds);
+            
+            // Add visual warnings
+            timerEl.classList.remove('warning', 'danger');
+            if (seconds <= 60) {
+                timerEl.classList.add('danger');
+            } else if (seconds <= 300) {
+                timerEl.classList.add('warning');
+            }
+        }
+
+        // FIXED: Timer synchronization using end time instead of remaining time
+        function startTimer(remainingSeconds) {
+            // Clear any existing timer
+            if (timerInterval) {
+                clearInterval(timerInterval);
+            }
+
+            // Calculate end time based on current time + remaining seconds
+            timerEndTime = Date.now() + (remainingSeconds * 1000);
+
+            // Update immediately
+            updateTimerDisplay(remainingSeconds);
+
+            // Update every second
+            timerInterval = setInterval(() => {
+                const now = Date.now();
+                const remaining = Math.max(0, Math.floor((timerEndTime - now) / 1000));
+                
+                updateTimerDisplay(remaining);
+
+                if (remaining <= 0) {
+                    clearInterval(timerInterval);
+                    timerInterval = null;
+                }
+            }, 1000);
+        }
+
+        function stopTimer() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+            timerEndTime = null;
+            timerEl.textContent = '00:00';
+            timerEl.classList.remove('warning', 'danger');
+        }
+
+        // Render Leaderboards
+        function renderLeaderboards(submissions) {
+            // Question Leaderboard (fastest solvers for current question)
+            const qScores = submissions
+                .filter(sub => sub.approved && sub.qId === activeQuestionID)
+                .sort((a, b) => a.timestamp - b.timestamp)
+                .slice(0, 10);
+
+            qLeaderboardList.innerHTML = qScores.map((sub, index) => `
+                <li class="leaderboard-item">
+                    <div class="rank">#${index + 1}</div>
+                    <div class="player-info">
+                        <div class="player-name">${sub.name}</div>
+                        <div class="player-stat">${new Date(sub.timestamp).toLocaleTimeString()}</div>
+                    </div>
+                </li>
+            `).join('') || '<div class="empty-state"><div class="empty-state-icon">🏁</div><p>No submissions yet. Be the first!</p></div>';
+
+            // Overall Event Leaderboard
+            const userScores = {};
+            submissions.filter(sub => sub.approved).forEach(sub => {
+                userScores[sub.name] = userScores[sub.name] || new Set();
+                userScores[sub.name].add(sub.qId);
+            });
+
+            const eventScores = Object.entries(userScores)
+                .map(([name, qIds]) => ({ name, score: qIds.size }))
+                .sort((a, b) => b.score - a.score)
+                .slice(0, 10);
+
+            eventLeaderboardList.innerHTML = eventScores.map((data, index) => `
+                <li class="leaderboard-item">
+                    <div class="rank">#${index + 1}</div>
+                    <div class="player-info">
+                        <div class="player-name">${data.name}</div>
+                        <div class="player-stat">${data.score} solved</div>
+                    </div>
+                </li>
+            `).join('') || '<div class="empty-state"><div class="empty-state-icon">🏁</div><p>No approved submissions yet</p></div>';
+        }
+
+        // Start Submissions Listener
+        function startSubmissionListener(evId) {
+            if (submissionListener) submissionListener();
+
+            const subsQuery = query(
+                collection(db, "submissions"),
+                where("evId", "==", evId),
+                orderBy("timestamp", "asc")
+            );
+
+            submissionListener = onSnapshot(subsQuery, (snapshot) => {
+                const submissionsData = snapshot.docs.map(doc => ({
+                    ...doc.data(),
+                    timestamp: doc.data().timestamp ? doc.data().timestamp.toDate().getTime() : 0,
+                }));
+                renderLeaderboards(submissionsData);
+            });
+
+            leaderboardCard.classList.remove('hidden');
+        }
+
+        // Listen to Events
+        onSnapshot(query(collection(db, "events"), orderBy("createdAt", "desc")), (snapshot) => {
+            pastEventsContainer.innerHTML = '';
+            upcomingEventsContainer.innerHTML = '';
+            
+            let activeEvent = null;
+            let newActiveQID = null;
+            let newActiveDocId = null;
+
+            snapshot.forEach(docSnap => {
+                const ev = docSnap.data();
+                const docId = ev.evId || docSnap.id;
+
+                const questionTexts = Array.isArray(ev.questions) 
+                    ? ev.questions.map((q, i) => `<strong>Q${i + 1}:</strong> ${q.text}`).join('<br>')
+                    : 'No questions available';
+
+                const evDiv = document.createElement('div');
+                evDiv.className = 'event-item';
+                evDiv.innerHTML = `
+                    <div class="event-item-title">${ev.name}</div>
+                    <div class="event-item-meta">${questionTexts}</div>
+                `;
+
+                if (ev.started && !ev.paused) {
+                    activeEvent = ev;
+                    newActiveDocId = docId;
+                    const activeQ = ev.questions.find(q => q.status === 'active');
+                    if (activeQ) {
+                        newActiveQID = activeQ.qId;
+                    }
+                } else if (ev.started && ev.paused) {
+                    evDiv.innerHTML += '<span class="event-status">⏸ PAUSED</span>';
+                    upcomingEventsContainer.appendChild(evDiv);
+                } else {
+                    upcomingEventsContainer.appendChild(evDiv);
+                }
+
+                if (!ev.started) {
+                    pastEventsContainer.appendChild(evDiv.cloneNode(true));
+                }
+            });
+
+            // Update active event state
+            activeEventDocId = newActiveDocId;
+            activeEventData = activeEvent;
+            activeQuestionID = newActiveQID;
+
+            if (activeEvent && activeQuestionID) {
+                const currentQ = activeEvent.questions.find(q => q.qId === activeQuestionID);
+                
+                eventNameEl.textContent = activeEvent.name;
+                questionEl.textContent = currentQ.text;
+                submitBtn.disabled = false;
+
+                // FIXED: Start timer with remaining time from Firebase
+                const remainingTime = currentQ.remaining ?? currentQ.timeout ?? 600;
+                startTimer(remainingTime);
+
+                startSubmissionListener(activeEventDocId);
+            } else {
+                eventNameEl.textContent = 'No Active Event';
+                questionEl.textContent = 'Waiting for event to start...';
+                submitBtn.disabled = true;
+                stopTimer();
+                leaderboardCard.classList.add('hidden');
+                if (submissionListener) {
+                    submissionListener();
+                    submissionListener = null;
+                }
+            }
+
+            // Show empty states
+            if (!upcomingEventsContainer.innerHTML) {
+                upcomingEventsContainer.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📅</div><p>No upcoming events</p></div>';
+            }
+            if (!pastEventsContainer.innerHTML) {
+                pastEventsContainer.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🕐</div><p>No past events</p></div>';
+            }
+        });
+
+        // Tab Switching
+        tabUpcoming.addEventListener('click', () => {
+            tabUpcoming.setAttribute('aria-selected', 'true');
+            tabPast.setAttribute('aria-selected', 'false');
+            panelUpcoming.hidden = false;
+            panelPast.hidden = true;
+        });
+
+        tabPast.addEventListener('click', () => {
+            tabPast.setAttribute('aria-selected', 'true');
+            tabUpcoming.setAttribute('aria-selected', 'false');
+            panelPast.hidden = false;
+            panelUpcoming.hidden = true;
+        });
+
+        // Modal Controls
+        submitBtn.addEventListener('click', () => {
+            if (!activeEventDocId || !activeQuestionID) {
+                alert("No active event or question available");
+                return;
+            }
+            nameInput.value = '';
+            codeInput.value = '';
+            codeModal.classList.remove('hidden');
+            nameInput.focus();
+        });
+
+        closeModalBtn.addEventListener('click', () => {
+            codeModal.classList.add('hidden');
+        });
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === "Escape") {
+                codeModal.classList.add('hidden');
+            }
+        });
+
+        // Submit Code
+        submissionForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const name = nameInput.value.trim();
+            const code = codeInput.value.trim();
+
+            if (!activeEventDocId || !activeQuestionID || !name || !code) {
+                alert("Please fill in all fields");
+                return;
+            }
+
+            try {
+                submitCodeBtn.disabled = true;
+                submitCodeBtn.textContent = '⏳ Submitting...';
+
+                await addDoc(collection(db, 'submissions'), {
+                    evId: activeEventDocId,
+                    qId: activeQuestionID,
+                    name: name,
+                    code: code,
+                    timestamp: serverTimestamp(),
+                    approved: false
+                });
+
+                alert("✅ Code submitted successfully! Wait for admin approval.");
+                codeModal.classList.add('hidden');
+            } catch (err) {
+                console.error(err);
+                alert("❌ Submission failed. Please try again.");
+            } finally {
+                submitCodeBtn.disabled = false;
+                submitCodeBtn.textContent = '🚀 Submit Code';
+            }
+        });
+    </script>
+
+</body>
+
+</html>

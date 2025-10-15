@@ -47,3 +47,22 @@ input,textarea{width:100%;padding:8px;border-radius:6px;border:1px solid rgba(25
 ul{list-style:none;padding:0;max-height:280px;overflow:auto}
 li.eventItem{padding:8px;border-bottom:1px solid rgba(255,255,255,0.03);display:flex;justify-content:space-between;align-items:center}
 .small{font-size:13px;color:var(--muted)}
+/* Add to css/style.css */
+.footer {
+  text-align: center;
+  padding: 1em 0;
+  background: #f8f8f8;
+  position: fixed;
+  width: 100%;
+  bottom: 0;
+}
+
+.footer-link {
+  color: #333;
+  text-decoration: none;
+  margin: 0 10px;
+}
+
+.footer-link:hover {
+  text-decoration: underline;
+}

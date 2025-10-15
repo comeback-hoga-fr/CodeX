@@ -1,22 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Codex | CS Data Science Meetup</title>
-  <link rel="stylesheet" href="css/style.css" />
-</head>
-<body>
-  <div class="container">
-    <img src="assets/logo.png" alt="Codex Logo" class="logo" />
-    <h1>Codex: Where Code Meets Curiosity</h1>
-    <p>
-      A fun and interactive meetup for our CS (Data Science) batch — a blend of coding, challenges, and teamwork.
-    </p>
-    <a href="events.html" class="btn">Go to Events</a>
-    <a href="admin.html" class="btn btn-outline">Admin Panel</a>
-  </div>
-
-  <script src="js/main.js"></script>
-</body>
-</html>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Panel</title>
+<script src="https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js"></script>
+<style>
+  body { font-family: sans-serif; padding: 2rem; background: #fafafa; }
+    table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+      th, td { border: 1px solid #ccc; padding: 0.5rem; }
+      </style>
+      </head>
+      <body>
+      
+      <h1>Admin Panel</h1>
+      <button id="startBtn">Start Event</button>
+      <table>
+        <thead>
+            <tr>
+                  <th>User</th>
+                        <th>Question</th>
+                              <th>Time Spent (ms)</th>
+                                    <th>Answer</th>
+                                        </tr>
+                                          </thead>
+                                            <tbody id="responses"></tbody>
+                                            </table>
+                                            
+                                            <script>
+                                              // Firebase config
+                                                const firebaseConfig = {
+                                                apiKey: "AIzaSyDz5-E1-qZ4VLcOQqmsiEh6iXIkU-8VW9o",
+                                                authDomain: "codex-3d806.firebaseapp.com",
+                                                projectId: "codex-3d806",
+                                                storageBucket: "codex-3d806.firebasestorage.app",
+                                                messagingSenderId: "376789695205",
+                                                appId: "1:376789695205:web:932c02c22396429455b20c"
+                                              };
+                                                                const app = firebase.initializeApp(firebaseConfig);
+                                                                  const db = firebase.firestore();
+                                                                  
+                                                                    // Start event
+                                                                      document.getElementById("startBtn").addEventListener("click", () => {
+                                                                          db.collection("eventControl").doc("status").set({ started: true });
+                                                                              alert("Event started!");
+                                                                                });
+                                                                                
+                                                                                  // Fetch responses live
+                                                                                    db.collection("responses").onSnapshot(snapshot => {
+                                                                                        const tbody = document.getElementById("responses");
+                                                                                            tbody.innerHTML = "";
+                                                                                                snapshot.forEach(doc => {
+                                                                                                      const data = doc.data();
+                                                                                                            data.answers.forEach(a => {
+                                                                                                                    const tr = document.createElement("tr");
+                                                                                                                            tr.innerHTML = `<td>${data.user}</td><td>${a.question}</td><td>${a.timeSpent}</td><td>${a.answer}</td>`;
+                                                                                                                                    tbody.appendChild(tr);
+                                                                                                                                          });
+                                                                                                                                              });
+                                                                                                                                                });
+                                                                                                                                                </script>
+                                                                                                                                                
+                                                                                                                                                </body>
+                                                                                                                                                </html>>
